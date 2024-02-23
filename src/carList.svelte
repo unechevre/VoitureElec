@@ -1,12 +1,11 @@
 <script>
-  import { onMount } from 'svelte';
-  import { vehicles } from './store';
-
+  import { onMount } from "svelte";
+  import { vehicles } from "./store";
 
   const headers = {
-    'Content-Type': 'application/json',
-    'x-client-id': '659fea30cff0bbbdf2fe22b5',
-    'x-app-id': '659fea30cff0bbbdf2fe22b7',
+    "Content-Type": "application/json",
+    "x-client-id": "659fea30cff0bbbdf2fe22b5",
+    "x-app-id": "659fea30cff0bbbdf2fe22b7",
   };
 
   async function getVehicleList({ page, size = 30 }) {
@@ -28,19 +27,19 @@
           }
         }
       `,
-      variables: {}
+      variables: {},
     };
 
     try {
-      const response = await fetch('https://api.chargetrip.io/graphql', {
-        method: 'POST',
+      const response = await fetch("https://api.chargetrip.io/graphql", {
+        method: "POST",
         headers: headers,
         body: JSON.stringify(vehicleListQuery),
       });
       const data = await response.json();
       vehicles.set(data.data?.vehicleList || []);
     } catch (error) {
-      console.error('Erreur lors de la requête à Chargetrip:', error);
+      console.error("Erreur lors de la requête à Chargetrip:", error);
     }
   }
 

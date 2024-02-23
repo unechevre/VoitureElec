@@ -1,6 +1,5 @@
 
-import Test from './chargingStations.svelte';
-import Car from './carList.svelte'
+
 
 import App from './App.svelte';
 

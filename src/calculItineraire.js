@@ -1,4 +1,4 @@
-async function getItineraireGoogleMaps(depart, arrivee) {
+export async function getItineraireGoogleMaps(depart, arrivee) {
     const directionsService = new google.maps.DirectionsService();
 
     const request = {
