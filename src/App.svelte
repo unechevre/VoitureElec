@@ -10,7 +10,7 @@
   let adresseDepart = writable("");
   let adresseArrivee = writable("");
   let itineraire;
-
+  let directionsRenderer;
   const vehicleSearch = writable("");
   const suggestions = writable([]);
   const selectedVehicle = writable(null);
@@ -100,7 +100,7 @@
 
       if (itineraire && mapInstance) {
         const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setDirections({ routes: [] });
         directionsRenderer.setMap(mapInstance);
         directionsRenderer.setDirections({ routes: [] });
         const request = {
@@ -207,6 +207,10 @@
         center: { lat: 45.8992348, lng: 6.1288847 }, // Remplacez ces coordonnées par celles de votre choix
         zoom: 12, // Niveau de zoom initial
       });
+      if (!directionsRenderer) {
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(mapInstance);
+      }
     } else {
       window.initMap = initAutocomplete;
     }
