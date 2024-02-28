@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { getVehicleSuggestions } from "./CarListe";
+  import { getVehicleDetails } from "./CarDetail.js";
   import { getBornesDeRecharge } from "./borne.js";
   import { getItineraireGoogleMaps } from "./calculItineraire.js";
   import Map from "./Map.svelte";
@@ -14,6 +15,7 @@
   const vehicleSearch = writable("");
   const suggestions = writable([]);
   const selectedVehicle = writable(null);
+  let vehicleDetails = writable({});
 
   let tempsDeTrajet = "";
 
@@ -41,6 +43,16 @@
     );
     selectedVehicle.set(vehicle);
     suggestions.set([]); // Fermer les suggestions
+    getVehicleDetailsAsync(vehicle.id);
+  }
+
+  async function getVehicleDetailsAsync(vehicleId) {
+    const details = await getVehicleDetails(vehicleId);
+    if (details) {
+      vehicleDetails.set(details); // Mettre à jour le store avec les détails du véhicule
+    } else {
+      vehicleDetails.set({}); // Réinitialiser le store si aucun détail n'est trouvé
+    }
   }
 
   function trouverPointDeRecharge(distanceCible) {
@@ -113,9 +125,18 @@
         directionsService.route(request, async function (result, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             const segments = result.routes[0].legs;
-            const autonomie = 340000; // Autonomie de la voiture en mètres
             let distanceParcourue = 0;
             let waypoints = [];
+
+            var currentVehicleDetails;
+            vehicleDetails.subscribe((value) => {
+              currentVehicleDetails = value;
+            });
+            var autonomie =
+              ((currentVehicleDetails.range.chargetrip_range.best +
+                currentVehicleDetails.range.chargetrip_range.worst) /
+                2) *
+              1000; // autonomie max + autonomie min / 2 * 1000 pour avoir la moyenne en metres
 
             for (let i = 0; i < segments[0].steps.length; i++) {
               distanceParcourue =
