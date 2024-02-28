@@ -113,42 +113,32 @@
         directionsService.route(request, async function (result, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             const segments = result.routes[0].legs;
-            const autonomie = 34000; // Autonomie de la voiture en mètres
+            const autonomie = 340000; // Autonomie de la voiture en mètres
             let distanceParcourue = 0;
             let waypoints = [];
 
-            for (let i = 0; i < segments.length; i++) {
-              const segment = segments[i];
-              distanceParcourue += segment.distance.value;
+            for (let i = 0; i < segments[0].steps.length; i++) {
+              distanceParcourue =
+                distanceParcourue + segments[0].steps[i].distance.value;
 
-              while (distanceParcourue >= autonomie * 0.2) {
-                distanceParcourue -= autonomie * 0.2;
-
-                const pointRecharge = await trouverPointDeRecharge(
-                  segment.end_location.lat(),
-                  segment.end_location.lng()
+              if (distanceParcourue >= autonomie * 0.8) {
+                const rendu = await getCoordBornesDeRecharge(
+                  segments[0].steps[i].end_location.lat(),
+                  segments[0].steps[i].end_location.lng(),
+                  10000,
+                  1
                 );
-                if (pointRecharge) {
-                  const rendu = await getCoordBornesDeRecharge(
-                    pointRecharge.lat,
-                    pointRecharge.lng,
-                    10000,
-                    1
-                  );
-                  if (rendu.length > 0) {
-                    console.log(rendu[0].lat, rendu[0].lng);
-                    waypoints.push({
-                      location: { lat: rendu[0].lat, lng: rendu[0].lng },
-                      stopover: true,
-                    });
-                    // Ajouter la distance parcourue à partir de ce point de recharge
-                    distanceParcourue = 0;
-                  }
+                if (rendu.length > 0) {
+                  console.log(rendu[0].lat, rendu[0].lng);
+                  waypoints.push({
+                    location: { lat: rendu[0].lat, lng: rendu[0].lng },
+                    stopover: true,
+                  });
+                  // Ajouter la distance parcourue à partir de ce point de recharge
+                  distanceParcourue = 0;
                 }
               }
             }
-
-            // Ajouter les bornes de recharge au trajet
             if (waypoints.length > 0) {
               const requestWithWaypoints = { ...request, waypoints };
               directionsService.route(
@@ -168,9 +158,9 @@
               // Aucune borne de recharge trouvée dans les 20% de l'autonomie
               directionsRenderer.setDirections(result);
             }
-          } else {
-            console.error("Erreur lors du calcul de l'itinéraire : " + status);
           }
+
+          // Ajouter les bornes de recharge au trajet
         });
       }
     } catch (error) {
