@@ -17,7 +17,9 @@
     "@urql/core": "^4.2.2",
     "@urql/svelte": "^4.0.4",
     "axios": "^1.6.5",
+    "easy-soap-request": "^5.6.1",
     "graphql": "^16.8.1",
+    "soap": "^1.0.0",
     "svelte-google-maps": "^0.2.0"
   }
 }

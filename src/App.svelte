@@ -4,6 +4,7 @@
   import { getVehicleDetails } from "./CarDetail.js";
   import { getBornesDeRecharge } from "./borne.js";
   import { getItineraireGoogleMaps } from "./calculItineraire.js";
+  import { calculateSum } from "./serviceSoap.js";
   import Map from "./Map.svelte";
   import { writable } from "svelte/store";
 
@@ -16,12 +17,38 @@
   const suggestions = writable([]);
   const selectedVehicle = writable(null);
   let vehicleDetails = writable({});
-
-  let tempsDeTrajet = "";
+  let BorneAutonomie;
+  let tempsRecharge = [];
+  let tempsTrajetTotal;
+  let restemps;
+  let tempsDeTrajet;
+  let formattedTime;
 
   let mapInstance; // Variable pour stocker l'instance de la carte Google Maps
 
   let distanceTotaleParcourue = 0; // Variable pour stocker la distance totale parcourue
+
+  function convertHoursToHoursMinutes(value) {
+    const hours = Math.floor(value); // Obtient la partie entière pour les heures
+    const minutes = Math.round((value - hours) * 60); // Multiplie la partie décimale par 60 pour obtenir les minutes
+
+    // Retourne la chaîne formatée
+    return `${hours}h ${minutes}m`;
+  }
+
+  async function performCalculation(tempsRecharge) {
+    const tempsTrajetTotal = await calculateSum(tempsRecharge);
+    return tempsTrajetTotal;
+  }
+  async function calculer() {
+    try {
+      const tempsTrajetTotal = await performCalculation(tempsRecharge);
+      restemps = tempsTrajetTotal.CalculateSumResult / 60;
+      console.log("temps", tempsTrajetTotal);
+    } catch (error) {
+      console.error("Erreur lors du calcul:", error);
+    }
+  }
 
   async function updateSuggestions(value) {
     vehicleSearch.set(value);
@@ -87,6 +114,7 @@
             const coords = {
               lat: rendu[0].ylatitude,
               lng: rendu[0].xlongitude,
+              Puissance: rendu[0].puiss_max,
             };
             resolve([coords]);
           } else {
@@ -108,7 +136,7 @@
 
     try {
       itineraire = await getItineraireGoogleMaps(depart, arrivee);
-      tempsDeTrajet = itineraire.legs[0].duration.text;
+      tempsDeTrajet = itineraire.legs[0].duration.value;
 
       if (itineraire && mapInstance) {
         const directionsService = new google.maps.DirectionsService();
@@ -137,12 +165,25 @@
                 currentVehicleDetails.range.chargetrip_range.worst) /
                 2) *
               1000; // autonomie max + autonomie min / 2 * 1000 pour avoir la moyenne en metres
-
+            var temp;
             for (let i = 0; i < segments[0].steps.length; i++) {
               distanceParcourue =
                 distanceParcourue + segments[0].steps[i].distance.value;
 
-              if (distanceParcourue >= autonomie * 0.8) {
+              if (i >= segments[0].steps.length - 1) {
+                temp = distanceParcourue + segments[0].steps[i].distance.value;
+              } else {
+                temp =
+                  distanceParcourue + segments[0].steps[i + 1].distance.value;
+              }
+
+              if (temp >= autonomie * 0.8) {
+                var tempautonomie = autonomie - distanceParcourue;
+                tempautonomie =
+                  (tempautonomie / autonomie) *
+                  currentVehicleDetails.battery.usable_kwh;
+                tempautonomie =
+                  currentVehicleDetails.battery.usable_kwh - tempautonomie;
                 const rendu = await getCoordBornesDeRecharge(
                   segments[0].steps[i].end_location.lat(),
                   segments[0].steps[i].end_location.lng(),
@@ -150,6 +191,7 @@
                   1
                 );
                 if (rendu.length > 0) {
+                  tempsRecharge.push((tempautonomie / rendu[0].Puissance) * 60);
                   console.log(rendu[0].lat, rendu[0].lng);
                   waypoints.push({
                     location: { lat: rendu[0].lat, lng: rendu[0].lng },
@@ -160,6 +202,10 @@
                 }
               }
             }
+            tempsRecharge.push(tempsDeTrajet / 60);
+            await calculer();
+            formattedTime = convertHoursToHoursMinutes(restemps);
+            tempsRecharge = [];
             if (waypoints.length > 0) {
               const requestWithWaypoints = { ...request, waypoints };
               directionsService.route(
@@ -271,7 +317,7 @@
     <input type="text" placeholder="Ville d'arrivée" id="ville-arrivee" />
     <button on:click={calculerItineraire}>Calculer Itinéraire</button>
 
-    <div class="temps-de-trajet">Temps de trajet: {tempsDeTrajet}</div>
+    <div class="temps-de-trajet">Temps de trajet: {formattedTime}</div>
   </div>
   <div class="right-panel">
     <div id="map" style="width: 100%; height: 100%;"></div>
