@@ -1,0 +1,1 @@
+export const gooapi = import.meta.env.gooapi
