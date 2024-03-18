@@ -1,1 +1,1 @@
-export const gooapi = import.meta.env.gooapi
+export const gooapi = import.meta.env.VITE_gooapi
