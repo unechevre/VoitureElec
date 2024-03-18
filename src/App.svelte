@@ -27,6 +27,7 @@
   let mapInstance; // Variable pour stocker l'instance de la carte Google Maps
 
   let distanceTotaleParcourue = 0; // Variable pour stocker la distance totale parcourue
+  const apiKey = process.env.google;
 
   function convertHoursToHoursMinutes(value) {
     const hours = Math.floor(value); // Obtient la partie entière pour les heures
@@ -288,7 +289,7 @@
   <script
     defer
     async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkmNJfC0T5rHryGBtpbNFGCxalxK9OAC0&libraries=places&callback=initMap"
+    src="https://maps.googleapis.com/maps/api/js?key={apiKey}&libraries=places&callback=initMap"
   ></script>
 </svelte:head>
 
