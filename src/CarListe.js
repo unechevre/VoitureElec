@@ -1,8 +1,10 @@
+import { client } from "./lib/Env";
+import { app } from "./lib/Env";
 export const getVehicleSuggestions = async ({ page, size = 10, search = '' }) => {
   const headers = {
     'Content-Type': 'application/json',
-    'x-client-id': '659fea30cff0bbbdf2fe22b5',
-    'x-app-id': '659fea30cff0bbbdf2fe22b7',
+    "x-client-id": client, // Utilisez votre propre x-client-id
+    "x-app-id": app,  
   };
 
   const vehicleListQuery = {

@@ -29,9 +29,6 @@
 
   let distanceTotaleParcourue = 0; // Variable pour stocker la distance totale parcourue
 
-  console.log("renduddd");
-  console.log(gooapi);
-
   function convertHoursToHoursMinutes(value) {
     const hours = Math.floor(value); // Obtient la partie entière pour les heures
     const minutes = Math.round((value - hours) * 60); // Multiplie la partie décimale par 60 pour obtenir les minutes
