@@ -7,6 +7,7 @@
   import { calculateSum } from "./serviceSoap.js";
   import Map from "./Map.svelte";
   import { writable } from "svelte/store";
+  import { gooapi } from "./lib/Env";
 
   let bornes = [];
   let adresseDepart = writable("");
@@ -27,7 +28,7 @@
   let mapInstance; // Variable pour stocker l'instance de la carte Google Maps
 
   let distanceTotaleParcourue = 0; // Variable pour stocker la distance totale parcourue
-  import { gooapi } from "./lib/Env";
+
   console.log("renduddd");
   console.log(gooapi);
 
