@@ -1,10 +1,12 @@
+import { client } from "./lib/Env";
+import { app } from "./lib/Env";
 export const getVehicleDetails = async (vehicleId) => {
   const headers = {
     "Content-Type": "application/json",
-    "x-client-id": "659fea30cff0bbbdf2fe22b5", // Utilisez votre propre x-client-id
-    "x-app-id": "659fea30cff0bbbdf2fe22b7", // Utilisez votre propre x-app-id
+    "x-client-id": client, // Utilisez votre propre x-client-id
+    "x-app-id": app, // Utilisez votre propre x-app-id
   };
-
+console.log("client " + client);
   const vehicleDetailsQuery = {
     query: `
         query vehicle($vehicleId: ID!) {
