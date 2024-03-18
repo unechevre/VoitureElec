@@ -1,6 +1,6 @@
 export async function calculateSum(numbers) {
   try {
-    const response = await fetch("http://localhost:3000/calculate-sum", {
+    const response = await fetch("https://servjs.azurewebsites.net/calculate-sum", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import logging
+import os
 from spyne import Application, rpc, ServiceBase, Iterable, Unicode, Integer, Array, Float
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
@@ -36,5 +37,6 @@ if __name__ == '__main__':
                               out_protocol=Soap11())
 
     wsgi_application = WsgiApplication(application)
-    server = make_server('127.0.0.1', 8000, wsgi_application)
+    port = int(os.environ.get('PORT', 8000))
+    server = make_server('0.0.0.0', port, wsgi_application)
     server.serve_forever()
