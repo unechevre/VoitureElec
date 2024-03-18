@@ -28,6 +28,7 @@
 
   let distanceTotaleParcourue = 0; // Variable pour stocker la distance totale parcourue
   const apiKey = process.env.googleapi;
+  console.log(apiKey);
 
   function convertHoursToHoursMinutes(value) {
     const hours = Math.floor(value); // Obtient la partie entière pour les heures
