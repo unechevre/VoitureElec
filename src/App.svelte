@@ -23,7 +23,7 @@
   let tempsTrajetTotal;
   let restemps;
   let tempsDeTrajet;
-  let formattedTime;
+  let formattedTime = "";
 
   let mapInstance; // Variable pour stocker l'instance de la carte Google Maps
 
@@ -356,14 +356,43 @@
     overflow: hidden; /* Add this to ensure the map is contained within the panel */
   }
 
-  input {
-    margin-bottom: 10px;
+  input,
+  button,
+  .vehicle-dropdown {
+    border: 2px solid #cccccc; /* Light grey border */
+    border-radius: 4px; /* Rounded corners */
     padding: 8px;
-    width: 260px;
+    margin-top: 8px;
+    width: 260px; /* Adjust width as necessary */
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+
+  button {
+    background-color: #007bff; /* A nice shade of blue */
+    color: white;
+    border: none; /* Remove border for flat design */
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      box-shadow 0.3s; /* Smooth transition for hover effects */
+  }
+
+  button:hover {
+    background-color: #0056b3; /* Darker shade of blue for hover state */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for button press effect */
   }
 
   .temps-de-trajet {
-    margin-top: 20px;
+    font-size: 1.2em; /* Slightly larger font size for emphasis */
+    color: #007bff; /* Use the same color as the button for consistency */
+    padding: 10px 0; /* Add some vertical padding */
+    font-weight: bold; /* Make the font bold */
+    margin-top: 20px; /* Add some space above the travel time */
+    background: #f9f9f9; /* A subtle background color */
+    border-radius: 4px; /* Rounded corners for the background */
+    width: fit-content; /* Adjust width to the content */
+    padding: 8px 16px; /* Padding inside the background */
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); /* Consistent shadow effect */
   }
 
   .vehicle-dropdown {
