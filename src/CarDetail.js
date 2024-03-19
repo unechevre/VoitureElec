@@ -6,7 +6,6 @@ export const getVehicleDetails = async (vehicleId) => {
     "x-client-id": client, // Utilisez votre propre x-client-id
     "x-app-id": app, // Utilisez votre propre x-app-id
   };
-console.log("client " + client);
   const vehicleDetailsQuery = {
     query: `
         query vehicle($vehicleId: ID!) {

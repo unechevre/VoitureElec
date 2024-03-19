@@ -45,7 +45,6 @@
   }
 
   onMount(() => {
-    console.log("coucou");
     getVehicleList({ page: 1, size: 30 });
   });
 </script>
